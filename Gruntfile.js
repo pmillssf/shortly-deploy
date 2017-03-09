@@ -3,6 +3,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
+      options: {
+        separator: ';',
+      },
+      dist: {
+        src: ['public/client/*.js'],
+        dest: 'public/dist/build.js',
+      },
     },
 
     mochaTest: {
@@ -51,6 +58,7 @@ module.exports = function(grunt) {
 
     shell: {
       prodServer: {
+        command: 'git push live master'
       }
     },
   });
@@ -91,5 +99,10 @@ module.exports = function(grunt) {
     // add your deploy tasks here
   ]);
 
+  grunt.registerTask('start', ['nodemon']);
+
+  grunt.registerTask('push', ['shell']);
+
+  grunt.registerTask('concat-file', ['concat']);
 
 };
