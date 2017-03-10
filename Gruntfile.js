@@ -28,7 +28,7 @@ module.exports = function(grunt) {
     },
 
     uglify: {
-      my_target: {
+      myTarget: {
         files: {
           'public/dist/build.js': ['public/dist/build.js']
         }
@@ -38,10 +38,19 @@ module.exports = function(grunt) {
     eslint: {
       target: [
         // Add list of files to lint here
+        'public/client', 'lib/', 'app/', 'server.js', 'server-config.js'
       ]
     },
 
     cssmin: {
+      target: {
+        files: [{
+          expand: true,
+          src: ['public/style.css'],
+          dest: 'public/dist',
+          ext: '.min.css'
+        }]
+      }
     },
 
     watch: {
@@ -51,6 +60,7 @@ module.exports = function(grunt) {
           'public/lib/**/*.js',
         ],
         tasks: [
+          'eslint',
           'concat',
           'uglify'
         ]
@@ -89,6 +99,8 @@ module.exports = function(grunt) {
     'mochaTest'
   ]);
 
+  grunt.registerTask('lint', ['eslint']);
+
   grunt.registerTask('build', [ 'concat', 'uglify'
   ]);
 
@@ -100,9 +112,20 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('deploy', [
-    // add your deploy tasks here
-  ]);
+  // grunt.registerTask('deploy', [
+  //   // add your deploy tasks here
+  //   'eslint', 'concat', 'uglify', 'cssmin', 'mochaTest', 'nodemon', 'watch'
+  // ]);
+
+  grunt.registerTask('deploy', function() {
+    if (grunt.option('prod')) {
+      grunt.task.run(['eslint', 'concat', 'uglify', 'cssmin', 'mochaTest', 'shell']);
+    } else {
+      grunt.task.run(['eslint', 'concat', 'uglify', 'cssmin', 'mochaTest', 'watch']);
+    }
+  });
+
+  grunt.registerTask('deploy --prod', ['eslint']);
 
   grunt.registerTask('start', ['nodemon']);
 
